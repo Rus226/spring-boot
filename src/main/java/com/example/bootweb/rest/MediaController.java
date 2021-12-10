@@ -1,5 +1,6 @@
 package com.example.bootweb.rest;
 
+import com.example.bootweb.annotation.JfrProfile;
 import com.example.bootweb.dto.MediaSaveResponseDto;
 import com.example.bootweb.service.MediaService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class MediaController {
   private final MediaService service;
 
   @PostMapping
+  @JfrProfile
   public MediaSaveResponseDto save(@RequestPart MultipartFile file) {
     return service.save(file);
   }

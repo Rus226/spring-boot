@@ -1,5 +1,6 @@
 package com.example.bootweb.rest;
 
+import com.example.bootweb.annotation.JfrProfile;
 import com.example.bootweb.dto.RegistrationRequestDto;
 import com.example.bootweb.dto.RegistrationResponseDto;
 import com.example.bootweb.service.UserService;
@@ -23,14 +24,14 @@ public class UserController {
 
   @PreAuthorize("isAnonymous()")
   @PostMapping("/register")
+  @JfrProfile
   public RegistrationResponseDto register(@RequestBody @Valid RegistrationRequestDto requestDto) {
-//    return jfrTemplate.profile(request -> {
       return service.register(requestDto);
-//    });
   }
 
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/me")
+  @JfrProfile
   // FIXME: just for demo
   public ApplicationUserDetails register(@AuthenticationPrincipal ApplicationUserDetails details) {
     return details;
