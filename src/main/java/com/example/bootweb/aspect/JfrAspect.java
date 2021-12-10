@@ -1,5 +1,6 @@
 package com.example.bootweb.aspect;
 
+import com.example.bootweb.jfr.event.RequestEvent;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -21,19 +22,21 @@ public class JfrAspect {
     }
 
     @Around("jfrProfileAnnotationMethods()")
-    public Object jfrProfile (ProceedingJoinPoint thisJoinPoint) throws Throwable
-    {
-        String method = request.getMethod();
-        String requestURL = request.getRequestURI();
-        long contentLengthLong = request.getContentLengthLong();
-
-        //logic before
-
-        Object result = thisJoinPoint.proceed();
-
-        //logic after
-
-
+    public Object jfrProfile (ProceedingJoinPoint thisJoinPoint) throws Throwable {
+        final var evt = createEvent(request);
+        evt.begin();
+        var result = thisJoinPoint.proceed();
+        evt.commit();
         return result;
+    }
+
+    protected RequestEvent createEvent(HttpServletRequest request) {
+        final var evt = new RequestEvent();
+        var contentLengthLong = request.getContentLengthLong();
+        evt.size = contentLengthLong == -1 ? 0L : contentLengthLong;
+        evt.method = request.getMethod();
+        evt.uri = request.getRequestURI();
+
+        return evt;
     }
 }
